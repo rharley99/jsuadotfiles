@@ -156,18 +156,44 @@ sha256 expected_hash filename.zip
 Toggle visibility of hidden files in macOS Finder.
 
 ```bash
-# Show all files in Finder
+# Show all files in Finder (Show All Files)
 saf
 
-# Hide hidden files in Finder
+# Hide hidden files in Finder (Hide All Files)
 haf
 ```
 
 **Features:**
 
-- Automatically restarts Finder
-- System-wide effect
+- Automatically restarts Finder to apply changes
+- System-wide effect across all Finder windows
 - Alternative to Cmd+Shift+. keyboard shortcut
+- Uses system preferences to persist setting
+
+### Database Management
+
+#### `startpost` / `stoppost` / `statpost` - PostgreSQL Management
+
+Convenient wrappers for PostgreSQL server management via Homebrew services.
+
+```bash
+# Start PostgreSQL server
+startpost
+
+# Stop PostgreSQL server
+stoppost
+
+# Check PostgreSQL server status
+statpost
+```
+
+**Features:**
+
+- Uses Homebrew services for reliable management
+- `startpost` - Starts PostgreSQL using `brew services start postgresql`
+- `stoppost` - Stops PostgreSQL using `brew services stop postgresql`
+- `statpost` - Shows running PostgreSQL processes using `ps aux | rg postgres`
+- Works with Homebrew-installed PostgreSQL installations
 
 ## Development Tools
 
@@ -256,27 +282,40 @@ g push origin main
 
 ### Implementation Details
 
-| Function | Fish | Zsh | Implementation |
-|----------|------|-----|----------------|
-| `cat` | ✅ | ❌ | Fish function only |
-| `htop` | ✅ | ❌ | Fish function only |
-| `l`, `ll`, `la` | ✅ | ❌ | Fish functions only |
-| `src` | ✅ | ✅ | Different implementations |
-| `pi` | ✅ | ✅ | Different argument handling |
-| `rlv` | ✅ | ✅ | Slightly different asdf syntax |
-| `fs` | ✅ | ✅ | Both shells, different logic |
-| `dsx` | ✅ | ✅ | Both shells |
-| `path` | ✅ | ✅ | Both shells |
-| `g` | ✅ | ✅ | Shared script |
-| `sha256` | ✅ | ✅ | Shared script |
-| `saf`/`haf` | ✅ | ❌ | Fish functions only |
+| Function                          | Fish | Zsh | Implementation                 |
+| --------------------------------- | ---- | --- | ------------------------------ |
+| `cat`                             | ❌   | ✅  | Zsh abbreviation only          |
+| `htop`                            | ✅   | ❌  | Fish function only             |
+| `l`                               | ❌   | ✅  | Zsh abbreviation only          |
+| `ll`, `la`                        | ✅   | ❌  | Fish functions only            |
+| `src`                             | ✅   | ✅  | Different implementations      |
+| `pi`                              | ✅   | ✅  | Different argument handling    |
+| `rlv`                             | ✅   | ✅  | Slightly different asdf syntax |
+| `fs`                              | ✅   | ✅  | Both shells, different logic   |
+| `dsx`                             | ✅   | ✅  | Both shells                    |
+| `path`                            | ✅   | ✅  | Both shells                    |
+| `g`                               | ✅   | ✅  | Shared script                  |
+| `sha256`                          | ✅   | ✅  | Shared script                  |
+| `saf`/`haf`                       | ✅   | ✅  | Both shells                    |
+| `startpost`/`stoppost`/`statpost` | ✅   | ✅  | Both shells                    |
 
 ### Shell-Specific Notes
 
-**Fish-only functions** (`cat`, `htop`, `l`/`ll`/`la`, `saf`/`haf`):
+**Fish-only functions** (`htop`, `ll`/`la`):
 
 - Enhanced command wrappers with modern tools
 - Available when using Fish as primary shell
+
+**Zsh-only functions** (`cat`, `l`):
+
+- Command aliases via abbreviation system
+- Available when using Zsh as primary shell
+
+**Cross-shell functions** (`saf`/`haf`, `startpost`/`stoppost`/`statpost`):
+
+- Available in both Fish and Zsh with identical functionality
+- Maintain shell parity for system and database management
+- Same command syntax and behavior across shells
 
 **Cross-shell differences**:
 
@@ -356,12 +395,23 @@ g commit -m "update"
    ```bash
    # Switch to Fish shell or use alternatives
    fish
-   # Or use standard commands
-   /bin/cat file.txt    # Use system cat
-   sudo /usr/bin/htop   # Use system htop
+   # Or use standard commands for Fish-only functions
+   sudo /usr/bin/htop   # Use system htop (Fish function: sudo htop)
+   ls -lhF --git        # Manual ll command (Fish function)
+   ls -lahF --git       # Manual la command (Fish function)
    ```
 
-3. **Permission issues with system functions**
+3. **Zsh-only functions in Fish**
+
+   ```bash
+   # Switch to Zsh shell or use alternatives
+   zsh
+   # Or use manual commands for Zsh-only abbreviations
+   bat file.txt         # Manual cat command (Zsh abbreviation: cat=bat)
+   ls -lhF --git        # Manual l command (Zsh abbreviation)
+   ```
+
+4. **Permission issues with system functions**
 
    ```bash
    # htop automatically uses sudo
@@ -375,15 +425,15 @@ g commit -m "update"
 System functions work with these abbreviations:
 
 | Abbreviation | Expansion | Category |
-|--------------|-----------|----------|
-| `pi` | `pi` | Network |
-| `path` | `path` | System |
-| `src` | `src` | Shell |
+| ------------ | --------- | -------- |
+| `pi`         | `pi`      | Network  |
+| `path`       | `path`    | System   |
+| `src`        | `src`     | Shell    |
 
 See [abbreviations reference](../abbreviations.md) for complete list.
 
 ---
 
-*System functions enhance everyday terminal operations with modern tools and
+_System functions enhance everyday terminal operations with modern tools and
 sensible defaults. They maintain familiar command patterns while providing
-improved functionality.*
+improved functionality._
